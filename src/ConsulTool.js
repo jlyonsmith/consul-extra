@@ -45,8 +45,7 @@ export class ConsulTool {
       try {
         await this.consul.kv.set(key, value)
       } catch (error) {
-        this.error(`Unable to write key '${key}'`)
-        continue
+        throw new Error(`Unable to write key '${key}'`)
       }
 
       this.log.info(`Set key '${key}' to '${value}'`)
