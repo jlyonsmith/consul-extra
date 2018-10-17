@@ -148,7 +148,7 @@ Imports keys from a JSON/JSON5 file.
             await this.import(fileName);
             break;
           default:
-            throw new Error("Unknown commond '${subCommand}'");
+            throw new Error(`Unknown 'kv' sub-command '${subCommand}'`);
         }
         break;
 
