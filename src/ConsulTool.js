@@ -4,6 +4,7 @@ import { fullVersion } from "./version"
 import consul from "consul"
 import flatten from "flat"
 import autobind from "autobind-decorator"
+import { promises as fs } from "fs"
 
 @autobind
 export class ConsulTool {
@@ -13,24 +14,44 @@ export class ConsulTool {
   }
 
   async export(rootKey) {
-    const keys = await this.consul.kv.keys(rootKey)
-    let object = {}
+    try {
+      const keys = await this.consul.kv.keys(rootKey)
+      let object = {}
 
-    for (const key of keys) {
-      const entry = await this.consul.kv.get(key)
-      object[key] = entry.Value
+      for (const key of keys) {
+        const entry = await this.consul.kv.get(key)
+        object[key] = entry.Value
+      }
+
+      const json = JSON.stringify(
+        flatten.unflatten(object, { delimiter: "/" }),
+        null,
+        "  "
+      )
+
+      console.log(json)
+    } catch (error) {
+      throw new Error(`Root key '${rootKey}' was not found`)
     }
-
-    const json = JSON.stringify(
-      flatten.unflatten(object, { delimiter: "/" }),
-      null,
-      "  "
-    )
-
-    console.log(json)
   }
 
-  async import() {}
+  async import(fileName) {
+    const data = JSON5.parse(await fs.readFile(fileName))
+    const object = flatten(data, { delimiter: "/" })
+
+    for (const key of Object.keys(object)) {
+      const value = object[key]
+
+      try {
+        await this.consul.kv.set(key, value)
+      } catch (error) {
+        this.error(`Unable to write key '${key}'`)
+        continue
+      }
+
+      this.log.info(`Set key '${key}' to '${value}'`)
+    }
+  }
 
   async run(argv) {
     const options = {
@@ -97,11 +118,16 @@ Imports keys from a JSON/JSON5 file.
 `)
               return 0
             }
-            await this.import()
+            const fileName = this.args._[2]
+
+            if (!fileName) {
+              throw new Error(`No file name specified`)
+            }
+
+            await this.import(fileName)
             break
           default:
-            this.log.error("Unknown commond '${subCommand}'")
-            break
+            throw new Error("Unknown commond '${subCommand}'")
         }
         break
 
