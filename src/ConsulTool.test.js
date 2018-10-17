@@ -30,9 +30,9 @@ function getOutput(fn) {
   }
 }
 
-test("test help", (done) => {
+test("--help", (done) => {
   const mockLog = getMockLog()
-  const tool = new StampVerTool(mockLog)
+  const tool = new ConsulTool("cul", mockLog)
 
   return tool.run(["--help"]).then((exitCode) => {
     expect(exitCode).toBe(0)
@@ -41,9 +41,9 @@ test("test help", (done) => {
   })
 })
 
-test("test version", (done) => {
+test("--version", (done) => {
   const mockLog = getMockLog()
-  const tool = new StampVerTool(mockLog)
+  const tool = new ConsulTool("cul", mockLog)
 
   return tool.run(["--version"]).then((exitCode) => {
     expect(exitCode).toBe(0)

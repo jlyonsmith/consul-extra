@@ -63,7 +63,7 @@ export class ConsulTool {
     this.args = parseArgs(argv, options)
 
     if (this.args.version) {
-      this.log.info(`${fullVersion}`)
+      this.log.info(`v${fullVersion}`)
       return 0
     }
 

@@ -11,40 +11,38 @@
   "description": "Version stamping tool",
   "scripts": {
     "build": "babel src -d dist -s --ignore *.test.js",
-    "debug:stampver": "babel-node --inspect-brk src/stampver.js",
-    "test": "jest"
+    "debug:cul": "babel-node --inspect-brk src/cul.js",
+    "test": "jest $*"
   },
   "bin": {
-    "stampver": "dist/stampver.js"
+    "cul": "dist/cul.js"
   },
+  "files": [
+    "dist/**"
+  ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jlyonsmith/stampver.git"
+    "url": "git+https://github.com/jlyonsmith/consul-tool.git"
   },
   "keywords": [
-    "version",
-    "stamp",
+    "consul",
+    "cli",
     "tool"
   ],
   "author": "John Lyon-Smith",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jlyonsmith/stampver/issues"
+    "url": "https://github.com/jlyonsmith/consul-tool/issues"
   },
-  "homepage": "https://github.com/jlyonsmith/stampver#readme",
+  "homepage": "https://github.com/jlyonsmith/consul-tool#readme",
   "dependencies": {
     "autobind-decorator": "^2.1.0",
     "chalk": "^2.1.0",
     "consul": "^0.34.0",
     "flat": "^4.1.0",
-    "joi": "^11.1.1",
     "json5": "^0.5.1",
-    "minimatch": "^3.0.4",
     "minimist": "^1.2.0",
-    "moment": "^2.18.1",
-    "moment-timezone": "^0.5.13",
-    "tmp": "0.0.33",
-    "xregexp": "^3.2.0"
+    "tmp": "0.0.33"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
