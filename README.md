@@ -1,4 +1,4 @@
-# Extended commands for the `consul` CLI
+# Extended Commands for the `consul` CLI
 
 ## Summary
 
