@@ -99,7 +99,7 @@ let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = 
       case "kv":
         const subCommand = this.args._[1];
 
-        if (this.args.help || !subCommand) {
+        if (this.args.help && !subCommand) {
           this.log.info(`Usage: ${this.toolName} kv <sub-command> <options>
 
 Description:
