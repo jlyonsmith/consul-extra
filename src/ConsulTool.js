@@ -77,7 +77,7 @@ export class ConsulTool {
       case "kv":
         const subCommand = this.args._[1]
 
-        if (this.args.help || !subCommand) {
+        if (this.args.help && !subCommand) {
           this.log.info(`Usage: ${this.toolName} kv <sub-command> <options>
 
 Description:
