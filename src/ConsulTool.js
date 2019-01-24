@@ -6,6 +6,9 @@ import flatten from "flat"
 import autobind from "autobind-decorator"
 import { promises as fs } from "fs"
 
+// TODO: Pass through commands to consul if not recognized
+// TODO: Add leader command to show cluster leader
+
 @autobind
 export class ConsulTool {
   constructor(toolName, log) {
