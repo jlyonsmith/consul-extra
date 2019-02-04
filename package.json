@@ -15,7 +15,7 @@
     "test": "jest"
   },
   "bin": {
-    "cul": "dist/cul.js"
+    "consul2": "dist/consul2.js"
   },
   "files": [
     "dist/**"

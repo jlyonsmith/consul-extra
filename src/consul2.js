@@ -13,7 +13,6 @@ const log = {
   },
 }
 
-const debug = process.argv.includes("--debug")
 const tool = new ConsulTool(path.basename(process.argv[1], ".js"), log)
 
 tool
@@ -23,7 +22,7 @@ tool
   })
   .catch((error) => {
     process.exitCode = 200
-    if (debug) {
+    if (tool.debug) {
       console.error(error)
     }
     log.error(error.message)
