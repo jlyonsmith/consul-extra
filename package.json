@@ -11,8 +11,9 @@
   "description": "Extended commands for consul CLI",
   "scripts": {
     "build": "babel src -d dist -s --ignore *.test.js",
-    "debug:cul": "babel-node --inspect-brk src/cul.js",
-    "test": "jest"
+    "debug:consul2": "babel-node --inspect-brk src/consul2.js",
+    "test": "jest",
+    "deploy": "npm deploy"
   },
   "bin": {
     "consul2": "dist/consul2.js"

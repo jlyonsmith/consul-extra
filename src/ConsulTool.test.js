@@ -32,7 +32,7 @@ function getOutput(fn) {
 
 test("--help", (done) => {
   const mockLog = getMockLog()
-  const tool = new ConsulTool("cul", mockLog)
+  const tool = new ConsulTool("consul2", mockLog)
 
   return tool.run(["--help"]).then((exitCode) => {
     expect(exitCode).toBe(0)
@@ -43,7 +43,7 @@ test("--help", (done) => {
 
 test("--version", (done) => {
   const mockLog = getMockLog()
-  const tool = new ConsulTool("cul", mockLog)
+  const tool = new ConsulTool("consul2", mockLog)
 
   return tool.run(["--version"]).then((exitCode) => {
     expect(exitCode).toBe(0)
