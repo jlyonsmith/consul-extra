@@ -74,6 +74,18 @@ let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = 
     }
   }
 
+  async leader() {
+    const result = await this.consul.status.leader();
+
+    this.log.info(result);
+  }
+
+  async peers() {
+    const results = await this.consul.status.peers();
+
+    results.forEach(result => this.log.info(result));
+  }
+
   async run(argv) {
     const options = {
       string: [],
@@ -82,24 +94,25 @@ let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = 
       default: {}
     };
 
-    this.args = (0, _minimist2.default)(argv, options);
+    let args = (0, _minimist2.default)(argv, options);
 
-    if (this.args.version) {
+    this.debug = args.debug;
+
+    if (args.version) {
       this.log.info(`v${_version.fullVersion}`);
       return 0;
     }
 
-    let command = this.args._[0];
+    let command = args._[0];
 
     command = command ? command.toLowerCase() : "help";
+    const subCommand = args._.length > 0 ? args._[1] : "";
 
     this.consul = (0, _consul2.default)({ promisify: true });
 
     switch (command) {
       case "kv":
-        const subCommand = this.args._[1];
-
-        if (this.args.help && !subCommand) {
+        if (args.help && !subCommand) {
           this.log.info(`Usage: ${this.toolName} kv <sub-command> <options>
 
 Description:
@@ -107,16 +120,17 @@ Description:
 Operations on the key/value store
 
 Sub-Commands:
-  json-export     Export keys in JSON format
-  json-import     Import keys from JSON/JSON5 format
+  export     Export keys in JSON format
+  import     Import keys from JSON/JSON5 format
 `);
           return 0;
         }
 
         switch (subCommand) {
           case "json-export":
-            if (this.args.help) {
-              this.log.info(`Usage: ${this.toolName} kv json-export <root-key>
+          case "export":
+            if (args.help) {
+              this.log.info(`Usage: ${this.toolName} kv export <root-key>
 
 Description:
 
@@ -124,14 +138,15 @@ Exports keys from a JSON file.
 `);
               return 0;
             }
-            const rootKey = this.args._[2] || "";
+            const rootKey = args._[2] || "";
 
             await this.export(rootKey);
             break;
 
           case "json-import":
-            if (this.args.help) {
-              this.log.info(`Usage: ${this.toolName} kv json-import <file>
+          case "import":
+            if (args.help) {
+              this.log.info(`Usage: ${this.toolName} kv import <file>
 
 Description:
 
@@ -139,7 +154,7 @@ Imports keys from a JSON/JSON5 file.
 `);
               return 0;
             }
-            const fileName = this.args._[2];
+            const fileName = args._[2];
 
             if (!fileName) {
               throw new Error(`No file name specified`);
@@ -152,22 +167,64 @@ Imports keys from a JSON/JSON5 file.
         }
         break;
 
+      case "status":
+        if (args.help && !subCommand) {
+          this.log.info(`Usage: ${this.toolName} status <sub-command> <options>
+
+Description:
+
+Operations on the key/value store
+
+Sub-Commands:
+  leader    Show the current raft leader
+  pers      Return the current raft peer set
+`);
+          return 0;
+        }
+
+        switch (subCommand) {
+          case "leader":
+            if (args.help) {
+              this.log.info(`Usage: ${this.toolName} status leader
+
+Show the current raft leader.
+`);
+              return 0;
+            }
+            await this.leader();
+            break;
+
+          case "peers":
+            if (args.help) {
+              this.log.info(`Usage: ${this.toolName} status peers
+
+Show the current raft peers.
+`);
+              return 0;
+            }
+            await this.peers();
+            break;
+
+          default:
+            throw new Error(`Unknown 'status' sub-command '${subCommand}'`);
+        }
+        break;
+
       case "help":
       default:
         this.log.info(`
-Consul Tool
-
 Usage: ${this.toolName} <command> ...
 
 Provides extended functionality for the consul command line tool.
 
 Commands:
-  kv        Operations related to the key/value store
+  kv          Operations related to the key/value store
+  status      Status operations
 
 Global Options:
---help      Displays this help
---version   Displays tool version
---debug     Show debug output
+  --help      Displays this help
+  --version   Displays tool version
+  --debug     Show debug output
 `);
         return 0;
     }
