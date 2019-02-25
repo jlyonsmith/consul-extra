@@ -3,37 +3,27 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.ConsulTool = undefined;
+exports.ConsulTool = void 0;
 
-var _class;
+var _minimist = _interopRequireDefault(require("minimist"));
 
-var _minimist = require("minimist");
-
-var _minimist2 = _interopRequireDefault(_minimist);
-
-var _json = require("json5");
-
-var _json2 = _interopRequireDefault(_json);
+var _json = _interopRequireDefault(require("json5"));
 
 var _version = require("./version");
 
-var _consul = require("consul");
+var _consul = _interopRequireDefault(require("consul"));
 
-var _consul2 = _interopRequireDefault(_consul);
+var _flat = _interopRequireDefault(require("flat"));
 
-var _flat = require("flat");
-
-var _flat2 = _interopRequireDefault(_flat);
-
-var _autobindDecorator = require("autobind-decorator");
-
-var _autobindDecorator2 = _interopRequireDefault(_autobindDecorator);
+var _autobindDecorator = _interopRequireDefault(require("autobind-decorator"));
 
 var _fs = require("fs");
 
+var _class;
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = class ConsulTool {
+let ConsulTool = (0, _autobindDecorator.default)(_class = class ConsulTool {
   constructor(toolName, log) {
     this.toolName = toolName;
     this.log = log;
@@ -49,8 +39,9 @@ let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = 
         object[key] = entry.Value;
       }
 
-      const json = JSON.stringify(_flat2.default.unflatten(object, { delimiter: "/" }), null, "  ");
-
+      const json = JSON.stringify(_flat.default.unflatten(object, {
+        delimiter: "/"
+      }), null, "  ");
       console.log(json);
     } catch (error) {
       throw new Error(`Root key '${rootKey}' was not found`);
@@ -58,8 +49,11 @@ let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = 
   }
 
   async import(fileName) {
-    const data = _json2.default.parse((await _fs.promises.readFile(fileName)));
-    const object = (0, _flat2.default)(data, { delimiter: "/" });
+    const data = _json.default.parse((await _fs.promises.readFile(fileName)));
+
+    const object = (0, _flat.default)(data, {
+      delimiter: "/"
+    });
 
     for (const key of Object.keys(object)) {
       const value = object[key];
@@ -76,13 +70,11 @@ let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = 
 
   async leader() {
     const result = await this.consul.status.leader();
-
     this.log.info(result);
   }
 
   async peers() {
     const results = await this.consul.status.peers();
-
     results.forEach(result => this.log.info(result));
   }
 
@@ -93,9 +85,7 @@ let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = 
       alias: {},
       default: {}
     };
-
-    let args = (0, _minimist2.default)(argv, options);
-
+    let args = (0, _minimist.default)(argv, options);
     this.debug = args.debug;
 
     if (args.version) {
@@ -104,11 +94,11 @@ let ConsulTool = exports.ConsulTool = (0, _autobindDecorator2.default)(_class = 
     }
 
     let command = args._[0];
-
     command = command ? command.toLowerCase() : "help";
     const subCommand = args._.length > 0 ? args._[1] : "";
-
-    this.consul = (0, _consul2.default)({ promisify: true });
+    this.consul = (0, _consul.default)({
+      promisify: true
+    });
 
     switch (command) {
       case "kv":
@@ -138,8 +128,8 @@ Exports keys from a JSON file.
 `);
               return 0;
             }
-            const rootKey = args._[2] || "";
 
+            const rootKey = args._[2] || "";
             await this.export(rootKey);
             break;
 
@@ -154,6 +144,7 @@ Imports keys from a JSON/JSON5 file.
 `);
               return 0;
             }
+
             const fileName = args._[2];
 
             if (!fileName) {
@@ -162,9 +153,11 @@ Imports keys from a JSON/JSON5 file.
 
             await this.import(fileName);
             break;
+
           default:
             throw new Error(`Unknown 'kv' sub-command '${subCommand}'`);
         }
+
         break;
 
       case "status":
@@ -191,6 +184,7 @@ Show the current raft leader.
 `);
               return 0;
             }
+
             await this.leader();
             break;
 
@@ -202,12 +196,14 @@ Show the current raft peers.
 `);
               return 0;
             }
+
             await this.peers();
             break;
 
           default:
             throw new Error(`Unknown 'status' sub-command '${subCommand}'`);
         }
+
         break;
 
       case "help":
@@ -231,5 +227,8 @@ Global Options:
 
     return 0;
   }
+
 }) || _class;
+
+exports.ConsulTool = ConsulTool;
 //# sourceMappingURL=ConsulTool.js.map
