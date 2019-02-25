@@ -1,8 +1,8 @@
-# Extended Commands for the `consul` CLI
+# Extra Commands for the `consul` CLI
 
 ## Summary
 
-This tool provides some extra features to the `consul` command line tool. Install it globally with `npm install consul-tool` and run it with `consul2`.
+This tool provides some extra features to the `consul` command line tool. Install it globally with `npm install consul-extra` and run it with `consul-extra`.
 
 This tool exposes the functionality of the [`consul`](https://www.npmjs.com/package/consul) library as a command line tool.
 
